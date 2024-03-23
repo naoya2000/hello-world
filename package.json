@@ -20,5 +20,17 @@
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
   },
-  "type": "module"
+  "type": "module",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
