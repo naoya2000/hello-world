@@ -1,3 +1,6 @@
+// this file uses import statements based on ES6 (as opposed to CommonJS)
+// partially adapted from https://github.com/AkileshRao/chat-server/blob/master/users.js
+
 import express from 'express';
 import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
@@ -5,6 +8,11 @@ import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import http from 'http';
+import {addUser, getUser, deleteUser, getUsers} from './users.js';
+import './libsignal-protocol-javascript-master/dist/libsignal-protocol.js';
+
+const PORT = process.env.PORT || 9472; // see explanation https://stackoverflow.com/questions/18864677/what-is-process-env-port-in-node-js
 
 async function main() {
   // open the database file
@@ -23,7 +31,18 @@ async function main() {
   `);
 
 const app = express();
-const server = createServer(app);
+
+/*
+const server = http.createServer((req, res) => {
+  res.statusCode = 200
+  res.setHeader('Content-Type', 'text/plain')
+  res.end('Hello world')
+});
+*/
+
+const server = http.createServer(app);
+
+//const server = createServer(app);
 const io = new Server(server, {
   connectionStateRecovery: {}
 });
@@ -35,18 +54,50 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', async (socket) => {
+  console.log("A user connected");
+  //socket.on('login', ({name, room}, callback) => {
+  socket.on('login', (name) => {
+    //const { user, error } = addUser(socket.id, name, room)
+    const {user, error} = addUser(socket.id, name, socket.id)
+    //if (error) return callback(error)
+    //socket.join(user.room)
+    socket.join(socket.id)
+    //socket.in(room).emit('notification', { title: 'Someone\'s here', description: `${user.name} just entered the room` })
+    socket.in(socket.id).emit('notification', { title: 'Someone\'s here', description: `${user.name} just entered the room` })
+    console.log(`${user.name} Joined the room ${user.room}`)
+    //io.in(room).emit('users', getUsers(room))
+    io.in(socket.id).emit('users', getUsers(socket.id))
+    //callback()
+    //document.title = "test"
+  });
+
   socket.on('chat message', async (msg) => {
     let result;
       try {
+        // Using user.name directly will not work, so we need to have the this_user_name intermediary
+        var this_user_name = getUser(socket.id).name;
         // store the message in the database
-        result = await db.run('INSERT INTO messages (content) VALUES (?)', msg);
+        var msg_str = this_user_name + ": " + msg
+        result = await db.run('INSERT INTO messages (content) VALUES (?)', msg_str);
       } catch (e) {
         // TODO handle the failure
         return;
       }
       // include the offset with the message
-      io.emit('chat message', msg, result.lastID);
+      io.emit('chat message', msg_str, result.lastID);
+
+      const user = getUser(socket.id)
+      //io.in(user.room).emit('message', { user: user.name, text: message });
   });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+        const user = deleteUser(socket.id)
+        if (user) {
+            io.in(user.room).emit('notification', { title: 'Someone just left', description: `${user.name} just left the room` })
+            io.in(user.room).emit('users', getUsers(user.room))
+        }
+  })
 
   if (!socket.recovered) {
     // if the connection state recovery was not successful
@@ -63,8 +114,11 @@ io.on('connection', async (socket) => {
   }
 });
 
-server.listen(3000, () => {
-    console.log('server running at http://localhost:3000');
+const hostname = 'localhost';
+// const port = 9472;
+
+server.listen(PORT, hostname, () => {
+    console.log(`server running at http://${hostname}:${PORT}`)
 });
 
 }

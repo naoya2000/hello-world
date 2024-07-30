@@ -3,17 +3,98 @@
 <head>
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Socket.IO chat</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato">
   <style>
-      body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+      body { margin: 0; padding-bottom: 3rem; font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
 
       #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;}
       #input:focus { outline: none; }
-      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;}
 
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages > li { padding: 0.5rem 1rem; }
       #messages > li:nth-child(odd) { background: #efefef; }
+
+      /* The Modal (background) */
+      .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        -webkit-animation-name: fadeIn; /* Fade in the background */
+        -webkit-animation-duration: 0.4s;
+        animation-name: fadeIn;
+        animation-duration: 0.4s
+      }
+
+      /* Modal Content */
+      .modal-content {
+        position: fixed;
+        bottom: 0;
+        background-color: #fefefe;
+        width: 100%;
+        -webkit-animation-name: slideIn;
+        -webkit-animation-duration: 0.4s;
+        animation-name: slideIn;
+        animation-duration: 0.4s
+      }
+
+      /* The Close Button */
+      .close {
+        color: white;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .modal-header {
+        padding: 2px 16px;
+        background-color: #5cb85c;
+        color: white;
+      }
+
+      .modal-body {padding: 2px 16px;}
+
+      .modal-footer {
+        padding: 2px 16px;
+        background-color: #5cb85c;
+        color: white;
+      }
+
+      /* Add Animation */
+      @-webkit-keyframes slideIn {
+        from {bottom: -300px; opacity: 0} 
+        to {bottom: 0; opacity: 1}
+      }
+
+      @keyframes slideIn {
+        from {bottom: -300px; opacity: 0}
+        to {bottom: 0; opacity: 1}
+      }
+
+      @-webkit-keyframes fadeIn {
+        from {opacity: 0} 
+        to {opacity: 1}
+      }
+
+      @keyframes fadeIn {
+        from {opacity: 0} 
+        to {opacity: 1}
+      }
   </style>
 </head>
 <body>
@@ -21,7 +102,46 @@
   <form id="form" action="">
     <input id="input" autocomplete="off" /><button>Send</button>
     <button id="toggle-btn">Disconnect</button>
+    <button id="data-collect-toggle">Opt-in to collection of chat data (Data currently not being collected)</button>
   </form>
+
+  <!-- The Modal -->
+  <div id="privacy-modal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>Thanks for allowing us to collect the data from this chat.</h2>
+      </div>
+      <div class="modal-body">
+        <p>We'll collect the messages of this chat and use it for evaluation/internal investigation, to train our personnel, and to research and innovate for social good. <b>We do not collect your IP address</b>, but we will collect message timestamps. Additionally, whilst we will attempt to remove personally identifying details, any personal details that you haven't redacted may be seen by us.</p>
+        <p>We may share this data with our research partners. They've pledged to use safeguards of the same level as our own privacy policy to protect your data, but as we share a copy of your data with our partners, we do not have direct control over how they use this data. We might be required to provide this information to governmental agencies if we are subject to legal processes.</p>
+        <p>If you are not comfortable with our collection and possible sharing of your data, please opt-out from collection of chat data.</p>
+        <p>After this chat ends, you'll have the opportunity to review the data that we keep, and redact any portion that you do not want us to keep. Portions that you choose to redact will be immediately deleted from our systems.</p>
+      </div>
+      <div class="modal-footer">
+        <h3>If you change your mind at any point, close this window and click the "Opt-out from collection of chat data (Data currently being collected)" button.</h3>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>Please provide your name.</h2>
+      </div>
+      <div class = "modal-body">
+        <p>If you don't feel comfortable providing your real name, feel free to provide an alias.</p>
+        <form id="login" action="">
+          <input id="username" autocomplete="off" /><button>Sign in</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io({
@@ -36,6 +156,18 @@
 
     const toggleButton = document.getElementById('toggle-btn');
 
+    const dataCollectToggle = document.getElementById('data-collect-toggle');
+
+    const loginModal = document.getElementById('login-modal');
+    const loginForm = document.getElementById('login')
+    const username = document.getElementById('username');
+    var dataCollectOptIn = false;
+    // Get the privacy modal
+    var privacyModal = document.getElementById("privacy-modal");
+    // Button that opens the modal is accounted for in the dataCollectToggle
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
   toggleButton.addEventListener('click', (e) => {
     e.preventDefault();
     if (socket.connected) {
@@ -47,11 +179,58 @@
     }
   });
 
+  dataCollectToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!dataCollectOptIn) {
+      dataCollectToggle.innerText = 'Opt-out from collection of chat data (Data currently being collected)';
+      dataCollectOptIn = true;
+      privacyModal.style.display = "block";
+    } else {
+      dataCollectToggle.innerText = 'Opt-in to collection of chat data (Data currently not being collected)';
+      dataCollectOptIn = false;
+    }
+  });
+  
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function() {
+    privacyModal.style.display = "none";
+  }
+
+  // When the user clicks anywhere outside of the login modal, close it
+  window.onclick = function(event) {
+    if (event.target == loginModal) {
+      loginModal.style.display = "none";
+    }
+  }
+
+  loginModal.style.display = "block";
+
+  /*
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (username.value) {
+      socket.emit('login', username.value, 4);
+      loginModal.style.display = "none";
+    }
+  })
+    */
+
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       if (input.value) {
         socket.emit('chat message', input.value);
         input.value = '';
+      }
+    });
+    
+    // loginForm event listener
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (username.value) {
+        socket.emit('login', username.value);
+        username.value = '';
+        loginModal.style.display = "none";
       }
     });
 
