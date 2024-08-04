@@ -10,7 +10,17 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import http from 'http';
 import {addUser, getUser, deleteUser, getUsers} from './users.js';
-import './libsignal-protocol-javascript-master/dist/libsignal-protocol.js';
+//import libsignal-protocol from './libsignal-protocol-javascript-master/dist/libsignal-protocol.js';
+import {curve, SessionRecord, SessionCipher} from 'libsignal'; // these are based on the exports in /node_modules/libsignal/index.js
+import { createKeyPair } from 'libsignal/src/curve.js';
+import { generateKeyPair } from 'libsignal/src/curve.js';
+import { encrypt } from 'libsignal/src/crypto.js';
+
+console.log("key pair")
+const keyPair = generateKeyPair();
+console.log(keyPair);
+console.log("only private key")
+console.log(keyPair["privKey"])
 
 const PORT = process.env.PORT || 9472; // see explanation https://stackoverflow.com/questions/18864677/what-is-process-env-port-in-node-js
 
@@ -85,6 +95,8 @@ io.on('connection', async (socket) => {
       }
       // include the offset with the message
       io.emit('chat message', msg_str, result.lastID);
+      io.emit('chat message', "Send another message after io.emit('chat message', msg_str, result.lastID);");
+      io.emit('chat message', '' + encrypt(keyPair["privKey"], Buffer.from(msg_str, 'utf-8'), keyPair["privKey"]));
 
       const user = getUser(socket.id)
       //io.in(user.room).emit('message', { user: user.name, text: message });
@@ -114,8 +126,8 @@ io.on('connection', async (socket) => {
   }
 });
 
-const hostname = 'localhost';
-// const port = 9472;
+const hostname = '192.168.1.7';
+const port = 9472;
 
 server.listen(PORT, hostname, () => {
     console.log(`server running at http://${hostname}:${PORT}`)

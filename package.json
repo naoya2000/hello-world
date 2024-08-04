@@ -15,6 +15,7 @@
   "homepage": "https://naoya2000.github.io/hello-world",
   "dependencies": {
     "express": "^4.18.2",
+    "libsignal": "^2.0.1",
     "react-scripts": "^5.0.1",
     "socket.io": "^4.7.4",
     "sqlite": "^5.1.1",
