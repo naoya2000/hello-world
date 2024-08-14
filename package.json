@@ -14,6 +14,7 @@
   "license": "ISC",
   "homepage": "https://naoya2000.github.io/hello-world",
   "dependencies": {
+    "@signalapp/libsignal-client": "^0.54.1",
     "express": "^4.18.2",
     "libsignal": "^2.0.1",
     "react-scripts": "^5.0.1",

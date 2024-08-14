@@ -1,3 +1,4 @@
+/*
 @media all {
     font-family: 'Lato', sans-serif;
     font-size: 12px;
@@ -22,3 +23,80 @@
     line-height: 1.5;
     padding: 4em 1em;
   }
+*/
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1em;
+    text-align: center;
+}
+
+.navbar {
+    background-color: #444;
+    border-top: 1px solid #333;
+    padding: 1em;
+}
+
+.logo {
+    font-size: 24px;
+    margin-bottom: 0.5em;
+}
+
+.nav-item {
+    margin-left: 1em;
+}
+
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2em;
+}
+
+h1 {
+    margin-bottom: 0.5em;
+}
+
+.chat-box {
+    position: relative;
+    margin-top: 2em;
+}
+
+.start-chat {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #444;
+    color: #fff;
+    padding: 0.5em;
+    border-radius: 0.25em;
+}
+
+.chat-log {
+    position: absolute;
+    top: 1em;
+    left: 0;
+    background-color: #333;
+    color: #fff;
+    padding: 0.5em;
+    border-radius: 0.25em;
+}
+
+footer {
+    background-color: #444;
+    color: #fff;
+    padding: 1em;
+    text-align: center;
+}
