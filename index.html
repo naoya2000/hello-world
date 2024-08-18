@@ -1,37 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mental Health Crisis Support</title>
-    <link rel="stylesheet" href="styles.css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<title>Here | Welcome</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato">
+<style>
+.scroller {
+  height: 100vh;
+  width: 100vw;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+
+.scroller section {
+  font-family: "Lato", sans-serif;
+  padding: 0vh 0;
+  line-height: 10vh;
+  text-align: center;
+  height: 100vh;
+  width: 100vw;
+  scroll-snap-align: start;
+  scroll-margin: 0px;
+}
+</style>
 </head>
 <body>
-    <header class="navbar">
-        <div class="logo">Mental Health Crisis Support</div>
-        <nav class=" navbar-nav">
-            <ul class="nav navbar-nav">
-                <li class="nav-item"><a class="nav-link" 
-href="#">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">About 
-Us</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Get 
-Help</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main role="main" class="container">
-        <h1>Mental Health Crisis Support</h1>
-        <p>We are here to help you through any mental health crisis. Chat 
-with one of our operators now, or explore our resources for support.</p>
-        <div class="chat-box">
-            <button class="start-chat">Start Chat</button>
-            <div class="chat-log"></div>
-        </div>
-    </main>
-    <footer class="footer">
-        <p>&copy; 2023 Mental Health Crisis Support</p>
-    </footer>
-    <script src="script.js"></script>
+<article class="scroller">
+  <section>
+    <h2>Welcome. You're Here. In just a few moments, you'll be on your way to talk to us.</h2>
+  </section>
+  <section>
+    <h2>In a world with so much going on, so much stress, it can be hard to understand how best to resolve your thoughts.</h2>
+  </section>
+  <section>
+    <h2>When you're in this sort of situation, it can help just to express your thoughts in a few words.</h2>
+  </section>
+  <section>
+    <h2>We have practices in place to protect your privacy. In the future, we will consider technical solutions including encryption.</h2>
+    <p>At the current stage of our product development, we do not implement encryption. However, from the perspective of what we can easily control, we take steps to help you be able to use our service with reassurance.</p>
+    <ul>
+      <li>We do not retain information from you by default. You will be able to provide information for us to save on an active consent basis.</li>
+      <li>In the future, we plan to implement end-to-end encryption to increase user security confidence.</li>
+      <li>Our staff are bound by our guidelines to not disclose details of conversations.</li>
+    </ul>
+    <p>If you have any questions about our practices, please feel free to contact me at <a href="mailto:jsfi2010@hotmail.com">jsfi2010@hotmail.com</a>.</p>
+  </section>
+  <section>
+    <h2><a href="http://133.200.221.128:9472">Proceed to the chat room.</a></h2>
+    <p>Please note that our service will have limited operating hours. We will announce them as soon as we decide.</p>
+  </section>
 </body>
+</article>
 </html>
